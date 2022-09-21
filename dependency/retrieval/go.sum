@@ -1368,6 +1368,8 @@ github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFF
 github.com/josharian/txtarfs v0.0.0-20210218200122-0702f000015a/go.mod h1:izVPOvVRsHiKkeGCT6tYBNWyDVuzj9wAaBb5R9qamfw=
 github.com/joshuatcasey/collections v0.4.0 h1:hFXRvb8kk9NTpCX0sUSPof9bBe0TCsu9VNIyhDruCsI=
 github.com/joshuatcasey/collections v0.4.0/go.mod h1:irNk4PiNqBXFiBMesbOBjnwvjVsKo1+090cf52qcJ3k=
+github.com/joshuatcasey/libdependency-fork v0.0.0-20220920201027-0a552129e6f7 h1:eg8AAMei2m8T92z0D0KdhcCbnuaIpAvcuNSsh06mlu0=
+github.com/joshuatcasey/libdependency-fork v0.0.0-20220920201027-0a552129e6f7/go.mod h1:/U2tPv+KO1TWmM8UQUhEmrCNp394CZNfGIVd/QZQ7Ek=
 github.com/jpillora/backoff v0.0.0-20180909062703-3050d21c67d7/go.mod h1:2iMrUgbbvHEiQClaW2NsSzMyGHqN+rDFqY705q49KG0=
 github.com/jpillora/backoff v1.0.0/go.mod h1:J/6gKK9jxlEcS3zixgDgUAsiuZ7yrSoa/FX5e0EB2j4=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=

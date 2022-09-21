@@ -2,7 +2,7 @@ module github.com/paketo-buildpacks/httpd/retrieval
 
 go 1.18
 
-replace github.com/joshuatcasey/libdependency => /Users/pivotal/workspace/libdependency-fork
+replace github.com/joshuatcasey/libdependency => github.com/joshuatcasey/libdependency-fork v0.0.0-20220920201027-0a552129e6f7
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
