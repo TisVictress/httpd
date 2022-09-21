@@ -35,7 +35,7 @@ runs:
     env:
       SKIP_LOGIN: true
     with:
-      args: "run -v /home/runner/work/httpd/httpd:/home compilation --version ${{ inputs.version }} --output-dir /home --target ${{ inputs.target }}"
+      args: "run -v ${{ inputs.outputDir }}:/home compilation --version ${{ inputs.version }} --outputDir /home --target ${{ inputs.target }}"
 
   - name: copy artifacts into output dir
     shell: bash

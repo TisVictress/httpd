@@ -164,7 +164,7 @@ func generateMetadata(hasVersion versionology.VersionFetcher) ([]versionology.De
 		ID:              "httpd",
 		Name:            "HTTPD",
 		Source:          release.dependencyURL,
-		SourceSHA256:    sourceSHA,
+		SourceChecksum:  sourceSHA,
 		DeprecationDate: nil,
 		Licenses:        retrieve.LookupLicenses(release.dependencyURL, decompress),
 		PURL:            retrieve.GeneratePURL("httpd", httpdVersion, sourceSHA, release.dependencyURL),

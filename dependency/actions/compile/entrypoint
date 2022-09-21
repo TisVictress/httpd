@@ -51,15 +51,16 @@ function main() {
     exit 1
   fi
 
-  apr_dir="$(mktemp -d)"
-  apr_iconv_dir="$(mktemp -d)"
-  apr_util_dir="$(mktemp -d)"
-  httpd_dir="$(mktemp -d)"
+  archives_dir="$(mktemp -d)"
 
-  dest_dir="$(mktemp -d)"
+  install_dir="$(mktemp -d)"
+  apr_dir="${install_dir}/apr"
+  apr_iconv_dir="${install_dir}/apr-iconv"
+  apr_util_dir="${install_dir}/apr-util"
+  httpd_dir="${install_dir}/httpd"
   
-  pushd "${apr_dir}"
-    echo "Installing APR"
+  pushd "${archives_dir}"
+    echo "Downloading APR dependency"
 
     curl "https://apache.osuosl.org/apr/apr-1.7.0.tar.gz" \
       --silent \
@@ -68,16 +69,21 @@ function main() {
     tar --extract \
       --file "apr-1.7.0.tar.gz"
 
-    echo "Running APR's configure script"
-
-    apr_dir="${apr_dir}/apr-1.7.0"
     pushd "apr-1.7.0"
-      ./configure
-    popd
-  popd
+      echo "Running APR's configure script"
+      mkdir "${apr_dir}"
+      ./configure --prefix="${apr_dir}"
 
-  pushd "${apr_iconv_dir}"
-    echo "Installing APR Iconv"
+      echo "Running make and make install for APR"
+      make
+      make install
+
+      echo "Running libtool"
+      "${apr_dir}/build-1/libtool" --finish "${apr_dir}/lib"
+      # /dep-install/apr//build-1/libtool --finish /dep-install/apr/lib
+    popd
+
+    echo "Downloading APR Iconf dependency"
 
     curl "https://apache.osuosl.org/apr/apr-iconv-1.2.2.tar.gz" \
       --silent \
@@ -86,16 +92,18 @@ function main() {
     tar --extract \
       --file "apr-iconv-1.2.2.tar.gz"
 
-    echo "Running APR Iconv's configure script"
-
-    apr_iconv_dir="${apr_iconv_dir}/apr-iconv-1.2.2"
     pushd "apr-iconv-1.2.2"
-      ./configure --with-apr="${apr_dir}/apr-1-config"
-    popd
-  popd
+      echo "Running APR Iconv's configure script"
+      mkdir "${apr_iconv_dir}"
+      ./configure --prefix="${apr_iconv_dir}" --with-apr="${apr_dir}/bin/apr-1-config"
 
-  pushd "${apr_util_dir}"
-    echo "Installing APR Util"
+      echo "Running make and make install for APR"
+      make
+      make install      
+    popd
+
+    echo "Downloading APR Util dependency"
+
     curl "https://apache.osuosl.org/apr/apr-util-1.6.1.tar.gz" \
       --silent \
       --output "apr-util-1.6.1.tar.gz"
@@ -103,11 +111,11 @@ function main() {
     tar --extract \
       --file "apr-util-1.6.1.tar.gz"
 
-    echo "Running APR Util's configure script"
-
-    apr_util_dir="${apr_util_dir}/apr-util-1.6.1"
     pushd "apr-util-1.6.1"
+      echo "Running APR Util's configure script"
+      mkdir "${apr_util_dir}"
       ./configure \
+        --prefix="${apr_util_dir}" \
         --with-apr="${apr_dir}" \
         --with-iconv="${apr_iconv_dir}" \
         --with-crypto \
@@ -116,12 +124,13 @@ function main() {
         --with-pgsql \
         --with-gdbm \
         --with-ldap
+
+      echo "Running make and make install for APR Util"
+      make
+      make install  
     popd
-  popd
 
-  pushd "${httpd_dir}"
-
-    echo "Downloading upstream tarball"
+    echo "Downloading HTTPD dependency"
 
     curl "http://archive.apache.org/dist/httpd/httpd-${version}.tar.bz2" \
       --silent \
@@ -129,12 +138,12 @@ function main() {
 
     tar --extract \
       --file "httpd-${version}.tar"
-
+    
     pushd "httpd-${version}"
       echo "Running HTTPD's ./configure script"
-
+      mkdir "${httpd_dir}"
       ./configure \
-        --prefix=/app/httpd \
+        --prefix="${httpd_dir}" \
         --with-apr="${apr_dir}" \
         --with-apr-util="${apr_util_dir}" \
         --with-ssl=/usr/lib/x86_64-linux-gnu \
@@ -143,16 +152,15 @@ function main() {
         --disable-isapi \
         --disable-dav \
         --disable-dialup
-
-      echo "Running make and make install"
-
+      
+      echo "Running make and make install for APR Util"
       make
-      DESTDIR="${dest_dir}/httpd" make install
+      make install  
     popd
   popd
 
-  pushd "${dest_dir}"
-    tar zcvf "${output_dir}/temp.tgz" .
+  pushd "${install_dir}"
+    tar zcvf "${output_dir}/temp.tgz" ./httpd
   popd
 
   pushd "${output_dir}"

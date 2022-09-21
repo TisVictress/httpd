@@ -66,12 +66,6 @@ jobs:
           NEW_VERSIONS="${NEW_VERSIONS//$'\r'/'%0D'}"
           echo "::set-output name=new-versions::${NEW_VERSIONS}"
 
-          TARGETS=$(cat "${TARGETS_FILE}")
-          TARGETS="${TARGETS//'%'/'%25'}"
-          TARGETS="${TARGETS//$'\n'/'%0A'}"
-          TARGETS="${TARGETS//$'\r'/'%0D'}"
-          echo "::set-output name=targets::${TARGETS}"
-
           echo "::set-output name=id::$(make id)"
       - name: List new versions '${{ steps.retrieve.outputs.new-versions }}'
         run: echo '${{ steps.retrieve.outputs.new-versions }}'
@@ -121,7 +115,6 @@ jobs:
       fail-fast: false
       matrix:
         metadata: ${{ fromJSON(needs.retrieve.outputs.metadata) }}
-        target: ${{ fromJSON(needs.retrieve.outputs.targets) }}
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -147,11 +140,4 @@ jobs:
         with:
           version: "${{ matrix.metadata.version }}"
           outputDir: "${{ steps.make-output-dir.outputs.output-dir }}"
-          target: "${{ matrix.target }}"
-      - name: Test
-        if: ${{ needs.get-compile-and-test.outputs.should-test && matrix.metadata.sha256 == '' && matrix.metadata.uri == '' }}
-        working-directory: dependency
-        run: |
-          make test \
-            version="${{ matrix.metadata.version }}" \
-            tarball_path="${{ steps.make-output-dir.outputs.output-dir }}/*.tgz"
+          target: "${{ matrix.metadata.target }}"
