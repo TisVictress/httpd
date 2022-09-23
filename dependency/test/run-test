@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+set -x
+
+parent_dir="$(cd "$(dirname "$0")" && pwd)"
+
+extract_tarball() {
+  rm -rf httpd
+  tar -xf /tarball_path/httpd-2.4.54-jammy.tgz
+}
+
+set_ld_library_path() {
+  export LD_LIBRARY_PATH="$PWD/httpd/lib:${LD_LIBRARY_PATH:-}"
+  echo "${LD_LIBRARY_PATH}"
+  ls -lah /httpd/lib
+}
+
+check_version() {
+  expected_version=$1
+  actual_version="$(./httpd/bin/httpd -v | head -n1 | cut -d' ' -f3 | cut -d'/' -f2)"
+  if [[ "${actual_version}" != "${expected_version}" ]]; then
+    echo "Version ${actual_version} does not match expected version ${expected_version}"
+    exit 1
+  fi
+}
+
+check_server() { # bionic httpd dependency passes! jammy is failing; error msg says libc and libcrypt are required
+  SERVER_ROOT="$PWD/httpd" \
+    APP_ROOT="${parent_dir}/fixtures" \
+    PORT=8080 \
+    ./httpd/bin/httpd -f "${parent_dir}/fixtures/httpd.conf" -k start
+
+  set +e
+
+  succeeded=0
+  for _ in {1..5}; do
+    response="$(curl -s http://localhost:8080)"
+    if [[ $response == *"Sample httpd app"* ]]; then
+      succeeded=1
+      break
+    fi
+    sleep 1
+  done
+
+  kill "$(cat httpd/logs/httpd.pid)"
+
+  set -e
+
+  if [[ ${succeeded} -eq 0 ]]; then
+    echo "Failed to curl server"
+    exit 1
+  fi
+}
+
+main() {
+  extract_tarball
+  set_ld_library_path
+  check_version "$1"
+  check_server
+
+  echo "All tests passed!"
+}
+
+main "$@"

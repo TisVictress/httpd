@@ -159,6 +159,22 @@ function main() {
     popd
   popd
 
+  pushd "${httpd_dir}"
+    rm -rf cgi-bin/ error/ icons/ include/ man/ manual/ htdocs/
+    rm -rf conf/extra/* conf/httpd.conf conf/httpd.conf.bak conf/magic conf/original
+    mkdir -p lib
+    cp "${apr_dir}/lib/libapr-1.so.0" ./lib
+    cp "${apr_util_dir}/lib/libaprutil-1.so.0" ./lib
+    mkdir -p "./lib/apr-util-1"
+    cp "${apr_util_dir}/lib/apr-util-1/"*.so ./lib/apr-util-1/
+    mkdir -p "./lib/iconv"
+    cp "${apr_iconv_dir}/lib/libapriconv-1.so.0" ./lib
+    cp "${apr_iconv_dir}/lib/iconv/"*.so ./lib/iconv/
+    cp /usr/lib/x86_64-linux-gnu/libcjose.so* ./lib/
+    cp /usr/lib/x86_64-linux-gnu/libhiredis.so* ./lib/
+    cp /usr/lib/x86_64-linux-gnu/libjansson.so* ./lib/
+  popd
+
   pushd "${install_dir}"
     tar zcvf "${output_dir}/temp.tgz" ./httpd
   popd
