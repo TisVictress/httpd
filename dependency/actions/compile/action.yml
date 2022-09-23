@@ -37,10 +37,6 @@ runs:
     with:
       args: "run -v ${{ inputs.outputDir }}:/home compilation --version ${{ inputs.version }} --outputDir /home --target ${{ inputs.target }}"
 
-  - name: copy artifacts into output dir
-    shell: bash
-    run: cp -r $GITHUB_WORKSPACE/*.tgz* ${{ inputs.outputDir }}
-
   - name: print contents of output dir
     shell: bash
-    run: ls -al ${{ inputs.outputDir }}
+    run: ls -lah ${{ inputs.outputDir }}

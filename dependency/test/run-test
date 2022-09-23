@@ -7,7 +7,7 @@ parent_dir="$(cd "$(dirname "$0")" && pwd)"
 
 extract_tarball() {
   rm -rf httpd
-  tar -xf /tarball_path/httpd-2.4.54-jammy.tgz
+  tar -xf /tarball_path/httpd-2.4.54-bionic.tgz
 }
 
 set_ld_library_path() {
