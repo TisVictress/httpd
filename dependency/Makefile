@@ -4,11 +4,12 @@ id:
 	@echo httpd
 
 test:
-	@echo test
+	@cd test; \
+	./run-test --version $(version) --tarballPath $(tarballPath)
 
 retrieve:
 	@cd retrieval; \
 	go build -o retrieve; \
 	./retrieve --buildpack_toml_path=$(buildpackTomlPath) \
-			--output=$(output); \
+		--output=$(output); \
 	rm retrieve
