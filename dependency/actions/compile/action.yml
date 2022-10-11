@@ -56,3 +56,8 @@ runs:
       SKIP_LOGIN: true
     with:
       args: "run -v ${{ inputs.outputDir }}:/tarball_path test --version ${{ inputs.version }}"
+
+  - name: run test no cli
+    id: run-test-no-cli
+    shell: bash
+    run: docker run -v ${{ inputs.outputDir }}:/tarball_path test --version ${{ inputs.version }}
